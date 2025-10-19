@@ -6,8 +6,8 @@ from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from keras.utils import image_dataset_from_directory
 
-TRAIN_FROM_SCRATCH = True
-LEARNING_RATE = 0.001
+TRAIN_FROM_SCRATCH = False
+LEARNING_RATE = 2e-5
 
 train_path = "tomato-new/train"
 val_path = "tomato-new/valid"
@@ -37,8 +37,9 @@ num_classes = len(train_ds.class_names)
 print("Train Class Names:", train_ds.class_names)
 print("Validation Class Names:", val_ds.class_names)
 
-train_ds = train_ds.cache().prefetch(buffer_size=data.AUTOTUNE)
-val_ds = val_ds.cache().prefetch(buffer_size=data.AUTOTUNE)
+# Temporarily commented out due to issues with cache file
+#train_ds = train_ds.cache().prefetch(buffer_size=data.AUTOTUNE)
+#val_ds = val_ds.cache().prefetch(buffer_size=data.AUTOTUNE)
 
 base_model = None
 model: models.Sequential = None
@@ -52,11 +53,10 @@ if TRAIN_FROM_SCRATCH:
 
     base_model.trainable = True
 
-    for layer in base_model.layers:
+    for layer in base_model.layers[:-1]:
         layer.trainable = False
 
     data_augmentation = models.Sequential([
-        layers.Input(shape=(224, 224, 3)),
         layers.RandomFlip("horizontal_and_vertical"),
         layers.RandomRotation(factor=0.1), # Rotates by +/- 36 degrees (0.1 * 2*pi).
         layers.RandomBrightness(factor=(-0.2, 0.2)), 
@@ -64,16 +64,21 @@ if TRAIN_FROM_SCRATCH:
     ])
 
     model = models.Sequential([
+        layers.Input(shape=(224, 224, 3)),
         data_augmentation,
         base_model,
         layers.GlobalAveragePooling2D(),
         layers.Dense(512, activation="relu"),
         layers.BatchNormalization(),
-        layers.Dropout(0.3),
         layers.Dense(num_classes, activation="softmax")
     ])
 else:
     model = models.load_model("tomato.keras")
+    base_model = model.get_layer("MobileNetV3Large")
+    for layer in base_model.layers[-3:]:
+        print(layer.trainable)
+        layer.trainable = True
+    
 
 model.compile(
     optimizer=Adam(learning_rate=LEARNING_RATE),

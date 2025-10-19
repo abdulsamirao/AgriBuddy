@@ -6,8 +6,8 @@ from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from keras.utils import image_dataset_from_directory
 
-TRAIN_FROM_SCRATCH = False
-LEARNING_RATE = 0.00001 #0.0001
+TRAIN_FROM_SCRATCH = True
+LEARNING_RATE = 0.001
 
 train_path = "tomato-new/train"
 val_path = "tomato-new/valid"
@@ -52,12 +52,15 @@ if TRAIN_FROM_SCRATCH:
 
     base_model.trainable = True
 
-    for layer in base_model.layers[:-5]:
+    for layer in base_model.layers:
         layer.trainable = False
 
     data_augmentation = models.Sequential([
-        layers.RandomRotation(factor=0.15 / 360 * 2 * 3.14159), # Convert degrees to radians
-        layers.RandomBrightness(factor=(-0.2, 0.0)), # Note: brightness range is inverted in new API
+        layers.Input(shape=(224, 224, 3)),
+        layers.RandomFlip("horizontal_and_vertical"),
+        layers.RandomRotation(factor=0.1), # Rotates by +/- 36 degrees (0.1 * 2*pi).
+        layers.RandomBrightness(factor=(-0.2, 0.2)), 
+        layers.RandomZoom(height_factor=(-0.2, 0.0), width_factor=(-0.2, 0.0)), 
     ])
 
     model = models.Sequential([
@@ -65,8 +68,8 @@ if TRAIN_FROM_SCRATCH:
         base_model,
         layers.GlobalAveragePooling2D(),
         layers.Dense(512, activation="relu"),
-        layers.Dense(256, activation="relu"),
-        layers.Dense(128, activation="relu"),
+        layers.BatchNormalization(),
+        layers.Dropout(0.3),
         layers.Dense(num_classes, activation="softmax")
     ])
 else:

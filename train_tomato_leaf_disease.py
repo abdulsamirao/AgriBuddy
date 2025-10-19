@@ -7,6 +7,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from keras.utils import image_dataset_from_directory
 
 TRAIN_FROM_SCRATCH = False
+LEARNING_RATE = 0.00001 #0.0001
 
 train_path = "tomato-new/train"
 val_path = "tomato-new/valid"
@@ -72,7 +73,7 @@ else:
     model = models.load_model("tomato.keras")
 
 model.compile(
-    optimizer=Adam(learning_rate=0.0001),
+    optimizer=Adam(learning_rate=LEARNING_RATE),
     loss="categorical_crossentropy",
     metrics=["accuracy"],
 )
@@ -103,10 +104,10 @@ CLASS_COUNTS = np.array([
     2826, # 0. Tomato___Bacterial_Spot
     2455, # 1. Tomato___Early_Blight
     3051, # 2. Tomato___Healthy
-    3113, # 3. Tomato___Late_Blight <--- Majority Class
+    3113, # 3. Tomato___Late_Blight
     2754, # 4. Tomato___Leaf_Mold
     2153, # 5. Tomato___Mosaic_Virus
-    1004, # 6. Tomato___Powdery_Mildew <--- Minority Class
+    1004, # 6. Tomato___Powdery_Mildew
     2882, # 7. Tomato___Septoria_Leaf_Spot
     1747, # 8. Tomato___Spider_Mites_Two-Spotted
     1827, # 9. Tomato___Target_Spot
@@ -119,10 +120,10 @@ def calculate_class_weights(counts):
     num_classes = len(counts)
     
     # Calculate initial weights
-    weights = total_samples / (num_classes * counts)
+    weights = (total_samples / num_classes) / counts
     
     # Normalize weights so the mean weight is 1 (optional, but good practice)
-    # weights /= np.mean(weights) 
+    weights /= np.mean(weights) 
     
     # Convert to dictionary format required by Keras: {class_index: weight}
     class_weights = {i: weight for i, weight in enumerate(weights)}

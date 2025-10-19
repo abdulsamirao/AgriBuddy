@@ -1,4 +1,5 @@
 from tensorflow import data
+import numpy as np
 from keras import models, layers
 from keras.applications import MobileNetV3Large
 from keras.optimizers import Adam
@@ -7,8 +8,8 @@ from keras.utils import image_dataset_from_directory
 
 TRAIN_FROM_SCRATCH = False
 
-train_path = "tomato/train"
-val_path = "tomato/val"
+train_path = "tomato-new/train"
+val_path = "tomato-new/valid"
 
 train_ds = image_dataset_from_directory(
     directory=train_path,
@@ -32,7 +33,10 @@ val_ds = image_dataset_from_directory(
 
 num_classes = len(train_ds.class_names)
 
-train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size=data.AUTOTUNE)
+print("Train Class Names:", train_ds.class_names)
+print("Validation Class Names:", val_ds.class_names)
+
+train_ds = train_ds.cache().prefetch(buffer_size=data.AUTOTUNE)
 val_ds = val_ds.cache().prefetch(buffer_size=data.AUTOTUNE)
 
 base_model = None
@@ -95,11 +99,48 @@ reduce_lr = ReduceLROnPlateau(
     min_lr=1e-7,
 )
 
+CLASS_COUNTS = np.array([
+    2826, # 0. Tomato___Bacterial_Spot
+    2455, # 1. Tomato___Early_Blight
+    3051, # 2. Tomato___Healthy
+    3113, # 3. Tomato___Late_Blight <--- Majority Class
+    2754, # 4. Tomato___Leaf_Mold
+    2153, # 5. Tomato___Mosaic_Virus
+    1004, # 6. Tomato___Powdery_Mildew <--- Minority Class
+    2882, # 7. Tomato___Septoria_Leaf_Spot
+    1747, # 8. Tomato___Spider_Mites_Two-Spotted
+    1827, # 9. Tomato___Target_Spot
+    2036, # 10. Tomato___Yellow_Leaf_Curl_Virus
+])
+
+def calculate_class_weights(counts):
+    """Calculates class weights inversely proportional to class frequency."""
+    total_samples = np.sum(counts)
+    num_classes = len(counts)
+    
+    # Calculate initial weights
+    weights = total_samples / (num_classes * counts)
+    
+    # Normalize weights so the mean weight is 1 (optional, but good practice)
+    # weights /= np.mean(weights) 
+    
+    # Convert to dictionary format required by Keras: {class_index: weight}
+    class_weights = {i: weight for i, weight in enumerate(weights)}
+    
+    print("\n--- Calculated Class Weights ---")
+    for i, weight in class_weights.items():
+        print(f"Class {i} (Count: {counts[i]:4d}): Weight = {weight:.3f}")
+        
+    return class_weights
+
+class_weights = calculate_class_weights(CLASS_COUNTS)
+
 model.fit(
     train_ds,
     validation_data=val_ds,
-    epochs=10,
+    epochs=5,
     callbacks=[early_stop, checkpoint, reduce_lr],
+    class_weight=class_weights,
 )
 
 model.save("tomato.keras")

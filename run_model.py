@@ -13,8 +13,9 @@ def preprocess_image(image_path: str):
 
 class_names = ['Tomato___Bacterial_Spot', 'Tomato___Early_Blight', 'Tomato___Healthy', 'Tomato___Late_Blight', 'Tomato___Leaf_Mold', 'Tomato___Mosaic_Virus', 'Tomato___Powdery_Mildew', 'Tomato___Septoria_Leaf_Spot', 'Tomato___Spider_Mites_Two-Spotted', 'Tomato___Target_Spot', 'Tomato___Yellow_Leaf_Curl_Virus']
 
-predictions = model.predict(preprocess_image("lab9.jpg"))
-predicted_class = class_names[np.argmax(predictions)]
-confidence = np.max(predictions)
-
-print(f"Predicted: {predicted_class} ({confidence*100:.2f}% confidence)")
+def predict_leaf_disease(image_path: str) -> tuple[str, float]:
+    predictions = model.predict(preprocess_image(image_path))
+    predicted_class = class_names[np.argmax(predictions)]
+    confidence = np.max(predictions)
+    return predicted_class, confidence
+    

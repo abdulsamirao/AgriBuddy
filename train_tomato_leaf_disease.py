@@ -70,6 +70,7 @@ if TRAIN_FROM_SCRATCH:
         layers.GlobalAveragePooling2D(),
         layers.Dense(512, activation="relu"),
         layers.BatchNormalization(),
+        layers.Dense(256, activation="relu"),
         layers.Dense(num_classes, activation="softmax")
     ])
 else:

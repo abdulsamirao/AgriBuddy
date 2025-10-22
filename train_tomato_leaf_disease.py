@@ -9,8 +9,8 @@ from keras.utils import image_dataset_from_directory
 TRAIN_FROM_SCRATCH = False
 LEARNING_RATE = 2e-5
 
-train_path = "tomato-new/train"
-val_path = "tomato-new/valid"
+train_path = "datasets/tomato-leaves-dataset/train"
+val_path = "datasets/tomato-leaves-dataset/valid"
 
 train_ds = image_dataset_from_directory(
     directory=train_path,
@@ -74,7 +74,7 @@ if TRAIN_FROM_SCRATCH:
         layers.Dense(num_classes, activation="softmax")
     ])
 else:
-    model = models.load_model("tomato.keras")
+    model = models.load_model("models/tomato.keras")
     base_model = model.get_layer("MobileNetV3Large")
     for layer in base_model.layers[-3:]:
         print(layer.trainable)
@@ -96,7 +96,7 @@ early_stop = EarlyStopping(
 )
 
 checkpoint = ModelCheckpoint(
-    "best_tomato_model.keras",
+    "models/best_tomato_model.keras",
     monitor="val_accuracy",
     save_best_only=True,
     mode="max",
@@ -153,5 +153,5 @@ model.fit(
     class_weight=class_weights,
 )
 
-model.save("tomato.keras")
-model.save_weights("tomato.weights.h5")
+model.save("models/tomato.keras")
+model.save_weights("models/tomato.weights.h5")

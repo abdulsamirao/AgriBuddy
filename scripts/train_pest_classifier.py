@@ -10,16 +10,16 @@ PEST_CONFIG: dict[str, any] = {
     "MODEL_CHECKPOINT_SAVE_PATH": "models/pest_classifier/pest_classifier_checkpoint.keras",
     
     # --- Hyperparameters ---
-    "TRAIN_FROM_SCRATCH": True,
+    "TRAIN_FROM_SCRATCH": False,
     "IMAGE_SIZE": (224, 224),
     "BATCH_SIZE": 32,
-    "LEARNING_RATE": 1e-4,
-    "EPOCHS": 5,
+    "LEARNING_RATE": 1e-6,
+    "EPOCHS": 30,
     "SEED": 42, # For data shuffling and augmentation
     
     # --- Transfer Learning Configuration ---
     # The number of final layers in the MobileNetV3Large base model to keep UNFROZEN (trainable).
-    "UNFROZEN_BASE_LAYERS_COUNT": 5, 
+    "UNFROZEN_BASE_LAYERS_COUNT": 80, 
     
     # --- Class Imbalance Handling ---
     "CLASS_COUNTS": np.array([

@@ -96,7 +96,7 @@ early_stop = EarlyStopping(
 )
 
 checkpoint = ModelCheckpoint(
-    "models/best_tomato_model.keras",
+    "models/best-tomato-model.keras",
     monitor="val_accuracy",
     save_best_only=True,
     mode="max",

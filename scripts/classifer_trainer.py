@@ -108,6 +108,7 @@ class ClassifierTrainer:
                 layers.Dense(512, activation="relu"),
                 layers.BatchNormalization(),
                 layers.Dense(256, activation="relu"),
+                layers.Dropout(0.3),
                 layers.Dense(self.num_classes, activation="softmax")
             ])
             

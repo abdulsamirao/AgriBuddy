@@ -3,7 +3,7 @@ from keras.preprocessing.image import img_to_array
 from PIL import Image
 import numpy as np
 
-model = load_model("models/tomato.keras")
+model = load_model("models/tomato_disease_classifier/tomato.keras")
 
 def preprocess_image(image_path: str):
     img = Image.open(image_path).convert("RGB").resize((224, 224))

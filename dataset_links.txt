@@ -1,18 +1,22 @@
 Tomato leaf disease classification:
-https://www.kaggle.com/datasets/ashishmotwani/tomato
+https://www.kaggle.com/datasets/ashishmotwani/tomato (done)
 
 Insect pests classification:
 https://www.kaggle.com/datasets/rtlmhjbn/ip02-dataset (to-do)
 (combined with)
 https://www.kaggle.com/datasets/gauravduttakiit/agricultural-pests-dataset
 
-Cotton leaf disease classification:
-https://www.kaggle.com/datasets/pantho12/sar-cld-2024-dataset-for-cotton-leaf (to-do)
-
 Wheat plant diseases classification:
 https://www.kaggle.com/datasets/kushagra3204/wheat-plant-diseases (to-do)
+
+Cotton leaf disease classification:
+https://www.kaggle.com/datasets/pantho12/sar-cld-2024-dataset-for-cotton-leaf (to-do)
+* Custom background augmentation!
 
 Mango leaf disease classification:
 https://www.kaggle.com/datasets/aryashah2k/mango-leaf-disease-dataset (to-do)
 * Custom background augmentation!
 
+Potato leaf disease dataset: (classes look a bit too similar to each other)
+(Maybe delete those that look similar and use the images as background for the above augmentation?)
+https://www.kaggle.com/datasets/warcoder/potato-leaf-disease-dataset

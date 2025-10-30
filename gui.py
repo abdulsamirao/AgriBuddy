@@ -12,11 +12,19 @@ class AgriBuddyApp(ctk.CTk):
         super().__init__()
         self.title("AgriBuddy")
         self.geometry("900x600")
-        self.resizable(False, False)
+        self.is_fullscreen = False
         self.frames = {}
+
+        # Bind F11 to toggle fullscreen
+        self.bind("<F11>", self.toggle_fullscreen)
+        self.bind("<Escape>", self.end_fullscreen)
 
         container = ctk.CTkFrame(self, fg_color="white")
         container.pack(fill="both", expand=True)
+        
+        # Configure grid weights for centering
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
 
         for F in (HomePage, ML1Page, ML2Page, ML3Page, ML4Page):
             page_name = F.__name__
@@ -29,6 +37,16 @@ class AgriBuddyApp(ctk.CTk):
     def show_frame(self, page_name):
         frame = self.frames[page_name]
         frame.tkraise()
+
+    def toggle_fullscreen(self, event=None):
+        self.is_fullscreen = not self.is_fullscreen
+        self.attributes("-fullscreen", self.is_fullscreen)
+        return "break"
+
+    def end_fullscreen(self, event=None):
+        self.is_fullscreen = False
+        self.attributes("-fullscreen", False)
+        return "break"
 
 
 # ---------------------------
@@ -50,7 +68,11 @@ class HomePage(ctk.CTkFrame):
         )
         subtitle.pack(pady=10)
 
-        grid_frame = ctk.CTkFrame(self, fg_color="white")
+        # Create a container frame for centering
+        center_container = ctk.CTkFrame(self, fg_color="white")
+        center_container.pack(expand=True)
+
+        grid_frame = ctk.CTkFrame(center_container, fg_color="white")
         grid_frame.pack(pady=40)
 
         models = [
@@ -95,9 +117,12 @@ class BaseModelPage(ctk.CTkFrame):
         title = ctk.CTkLabel(nav_frame, text=title_text, font=("Helvetica", 22, "bold"), text_color="white")
         title.pack(pady=10)
 
-        # Main Layout
-        main_frame = ctk.CTkFrame(self, fg_color="white")
-        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        # Main Layout with center container
+        center_container = ctk.CTkFrame(self, fg_color="white")
+        center_container.pack(fill="both", expand=True)
+        
+        main_frame = ctk.CTkFrame(center_container, fg_color="white")
+        main_frame.pack(fill="both", expand=True, padx=40, pady=20)
 
         # Left: File Upload Section
         left_frame = ctk.CTkFrame(main_frame, fg_color="#E8F5E9", corner_radius=15)
@@ -173,4 +198,3 @@ class ML4Page(BaseModelPage):
 if __name__ == "__main__":
     app = AgriBuddyApp()
     app.mainloop()
-

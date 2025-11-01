@@ -8,10 +8,12 @@ https://www.kaggle.com/datasets/gauravduttakiit/agricultural-pests-dataset
 
 Wheat plant diseases classification:
 https://www.kaggle.com/datasets/kushagra3204/wheat-plant-diseases (to-do)
+* use as bg
 
 Cotton leaf disease classification:
 https://www.kaggle.com/datasets/pantho12/sar-cld-2024-dataset-for-cotton-leaf (to-do)
-* Custom background augmentation!
+* Custom background augmentation:
+Herbicide Growth Damage
 
 Mango leaf disease classification:
 https://www.kaggle.com/datasets/aryashah2k/mango-leaf-disease-dataset (to-do)

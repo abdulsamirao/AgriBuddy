@@ -4,16 +4,16 @@ CONFIG: dict[str, any] = {
     # --- Data and File Paths ---
     "TASK_NAME": "mango_disease_classifier",
     "TRAIN_PATH": "datasets/mango_disease_dataset/train",
-    "VAL_PATH": "datasets/mango_disease_dataset/valid",
+    "VAL_PATH": "datasets/mango_disease_dataset/val",
     "MODEL_SAVE_PATH": "models/mango_disease_classifier/mango_disease_classifier_final.keras",
     "WEIGHTS_SAVE_PATH": "models/mango_disease_classifier/mango_disease_classifier_final.weights.h5",
     "MODEL_CHECKPOINT_SAVE_PATH": "models/mango_disease_classifier/mango_disease_classifier_checkpoint.keras",
     
     # --- Hyperparameters ---
-    "TRAIN_FROM_SCRATCH": True,
+    "TRAIN_FROM_SCRATCH": False,
     "IMAGE_SIZE": (224, 224),
     "BATCH_SIZE": 32,
-    "LEARNING_RATE": 1e-4,
+    "LEARNING_RATE": 4e-6,
     "EPOCHS": 30,
     "SEED": 42, # For data shuffling and augmentation
     
@@ -25,7 +25,7 @@ CONFIG: dict[str, any] = {
     "CLASS_COUNTS": np.array([
         400,  # Anthracnose
         400,  # Bacterial Canker
-        400,  # Cutting Weevil
+        #400,  # Cutting Weevil
         399,  # Die Back
         400,  # Gall Midge
         400,  # Healthy

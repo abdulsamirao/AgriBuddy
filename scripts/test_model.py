@@ -1,6 +1,7 @@
 #from classifier_engine import AgriculturePestClassifier
 from classifier_engine import WheatDiseaseClassifier
 from classifier_engine import MangoDiseaseClassifier
+from classifier_engine import CottonDiseaseClassifier
 
 #pest_classifier = AgriculturePestClassifier()
 
@@ -28,3 +29,10 @@ def test_mango():
     predicted_class, confidence = mango_disease_classifier.predict("test.png")
     print(predicted_class, confidence)
 
+def test_cotton():
+    cotton_disease_classifier = CottonDiseaseClassifier()
+    
+    predicted_class, confidence = cotton_disease_classifier.predict("test.jpg")
+    print(predicted_class, confidence)
+
+test_cotton()

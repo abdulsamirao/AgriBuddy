@@ -89,3 +89,9 @@ class MangoDiseaseClassifier(BaseClassifier):
     
     MODEL_PATH = "models/mango_disease_classifier/mango_disease_classifier_final.keras"
     CLASS_NAMES = ['Anthracnose', 'Bacterial Canker', 'Die Back', 'Gall Midge', 'Healthy', 'Powdery Mildew', 'Sooty Mould']
+    
+class CottonDiseaseClassifier(BaseClassifier):
+    """Classifier specifically for Cotton leaf diseases."""
+    
+    MODEL_PATH = "models/cotton_disease_classifier/cotton_disease_classifier_final.keras"
+    CLASS_NAMES = ['Bacterial Blight', 'Curl Virus', 'Healthy Leaf', 'Herbicide Growth Damage', 'Leaf Hopper Jassids', 'Leaf Redding', 'Leaf Variegation']

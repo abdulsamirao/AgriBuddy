@@ -35,4 +35,4 @@ def test_cotton():
     predicted_class, confidence = cotton_disease_classifier.predict("test.jpg")
     print(predicted_class, confidence)
 
-test_cotton()
+#test_cotton()

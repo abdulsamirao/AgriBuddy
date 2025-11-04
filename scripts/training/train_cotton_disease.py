@@ -4,16 +4,16 @@ CONFIG: dict[str, any] = {
     # --- Data and File Paths ---
     "TASK_NAME": "cotton_disease_classifier",
     "TRAIN_PATH": "datasets/cotton_disease_dataset/train",
-    "VAL_PATH": "datasets/mcotton_disease_dataset/val",
+    "VAL_PATH": "datasets/cotton_disease_dataset/val",
     "MODEL_SAVE_PATH": "models/cotton_disease_classifier/cotton_disease_classifier_final.keras",
     "WEIGHTS_SAVE_PATH": "models/cotton_disease_classifier/cotton_disease_classifier_final.weights.h5",
     "MODEL_CHECKPOINT_SAVE_PATH": "models/cotton_disease_classifier/cotton_disease_classifier_checkpoint.keras",
     
     # --- Hyperparameters ---
-    "TRAIN_FROM_SCRATCH": True,
+    "TRAIN_FROM_SCRATCH": False,
     "IMAGE_SIZE": (224, 224),
     "BATCH_SIZE": 32,
-    "LEARNING_RATE": 1e-4,
+    "LEARNING_RATE": 4e-6,
     "EPOCHS": 30,
     "SEED": 42, # For data shuffling and augmentation
     

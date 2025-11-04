@@ -12,3 +12,9 @@ print(predicted_class, confidence)
 
 predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Mite/mite_29.png")
 print(predicted_class, confidence)
+
+predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Mildew/mildew_test_41.png")
+print(predicted_class, confidence)
+
+predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Septoria/septoria_19.png")
+print(predicted_class, confidence)

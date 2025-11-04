@@ -1,6 +1,6 @@
 import numpy as np
 
-PEST_CONFIG: dict[str, any] = {
+CONFIG: dict[str, any] = {
     # --- Data and File Paths ---
     "TASK_NAME": "wheat_disease_classifier",
     "TRAIN_PATH": "datasets/wheat_disease_dataset/train",
@@ -44,9 +44,9 @@ PEST_CONFIG: dict[str, any] = {
 from classifer_trainer import ClassifierTrainer
 
 if __name__ == "__main__":
-    print(f"Starting training for {PEST_CONFIG['TASK_NAME']}...")
+    print(f"Starting training for {CONFIG['TASK_NAME']}...")
     
-    trainer = ClassifierTrainer(PEST_CONFIG)
+    trainer = ClassifierTrainer(CONFIG)
     
     train_ds, val_ds = trainer.load_datasets()
     

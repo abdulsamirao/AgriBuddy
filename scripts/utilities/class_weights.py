@@ -19,4 +19,4 @@ def list_subdirs_with_counts(folder_path: str) -> list[int]:
     
     return class_counts
 
-print(list_subdirs_with_counts("datasets/mango_disease_dataset/train"))
+print(list_subdirs_with_counts("datasets/cotton_disease_dataset/train"))

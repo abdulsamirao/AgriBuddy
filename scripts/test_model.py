@@ -1,20 +1,30 @@
-from classifier_engine import AgriculturePestClassifier
+#from classifier_engine import AgriculturePestClassifier
 from classifier_engine import WheatDiseaseClassifier
+from classifier_engine import MangoDiseaseClassifier
 
-pest_classifier = AgriculturePestClassifier()
-wheat_disease_classifier = WheatDiseaseClassifier()
+#pest_classifier = AgriculturePestClassifier()
 
-predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Brown Rust/brown_rust_test_3.png")
-print(predicted_class, confidence)
+def test_wheat():
+    wheat_disease_classifier = WheatDiseaseClassifier()
+    
+    predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Brown Rust/brown_rust_test_3.png")
+    print(predicted_class, confidence)
 
-predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Common Root Rot/common_root_rot_127.png")
-print(predicted_class, confidence)
+    predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Common Root Rot/common_root_rot_127.png")
+    print(predicted_class, confidence)
 
-predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Mite/mite_29.png")
-print(predicted_class, confidence)
+    predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Mite/mite_29.png")
+    print(predicted_class, confidence)
 
-predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Mildew/mildew_test_41.png")
-print(predicted_class, confidence)
+    predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Mildew/mildew_test_41.png")
+    print(predicted_class, confidence)
 
-predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Septoria/septoria_19.png")
-print(predicted_class, confidence)
+    predicted_class, confidence = wheat_disease_classifier.predict("datasets/wheat_disease_dataset/test/Septoria/septoria_19.png")
+    print(predicted_class, confidence)
+
+def test_mango():
+    mango_disease_classifier = MangoDiseaseClassifier()
+    
+    predicted_class, confidence = mango_disease_classifier.predict("test.png")
+    print(predicted_class, confidence)
+

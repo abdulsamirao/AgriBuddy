@@ -83,3 +83,9 @@ class WheatDiseaseClassifier(BaseClassifier):
     
     MODEL_PATH = "models/wheat_disease_classifier/wheat_disease_classifier_final.keras"
     CLASS_NAMES = ['Aphid', 'Black Rust', 'Blast', 'Brown Rust', 'Common Root Rot', 'Fusarium Head Blight', 'Healthy', 'Leaf Blight', 'Mildew', 'Mite', 'Septoria', 'Smut', 'Stem fly', 'Tan spot', 'Yellow Rust']
+
+class MangoDiseaseClassifier(BaseClassifier):
+    """Classifier specifically for Mango leaf diseases."""
+    
+    MODEL_PATH = "models/mango_disease_classifier/mango_disease_classifier_final.keras"
+    CLASS_NAMES = ['Anthracnose', 'Bacterial Canker', 'Die Back', 'Gall Midge', 'Healthy', 'Powdery Mildew', 'Sooty Mould']

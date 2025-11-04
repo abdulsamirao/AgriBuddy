@@ -77,3 +77,9 @@ class AgriculturePestClassifier(BaseClassifier):
         'earthworms', 'earwig', 'grasshopper', 'moth', 'slug',
         'snail', 'wasp', 'weevil'
     ]
+
+class WheatDiseaseClassifier(BaseClassifier):
+    """Classifier specifically for Wheat leaf diseases."""
+    
+    MODEL_PATH = "models/wheat_disease_classifier/wheat_disease_classifier_final.keras"
+    CLASS_NAMES = ['Aphid', 'Black Rust', 'Blast', 'Brown Rust', 'Common Root Rot', 'Fusarium Head Blight', 'Healthy', 'Leaf Blight', 'Mildew', 'Mite', 'Septoria', 'Smut', 'Stem fly', 'Tan spot', 'Yellow Rust']

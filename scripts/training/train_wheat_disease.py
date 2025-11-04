@@ -10,7 +10,7 @@ PEST_CONFIG: dict[str, any] = {
     "MODEL_CHECKPOINT_SAVE_PATH": "models/wheat_disease_classifier/wheat_disease_classifier_checkpoint.keras",
     
     # --- Hyperparameters ---
-    "TRAIN_FROM_SCRATCH": True,
+    "TRAIN_FROM_SCRATCH": False,
     "IMAGE_SIZE": (224, 224),
     "BATCH_SIZE": 32,
     "LEARNING_RATE": 1e-4,

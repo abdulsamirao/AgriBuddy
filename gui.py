@@ -165,30 +165,32 @@ class BaseModelPage(ctk.CTkFrame):
                                    command=self.toggle_theme)
         self.theme_button.pack(side="right", padx=15, pady=10)
 
-        # ---------------------------
+                # ---------------------------
         # Main Layout
         # ---------------------------
         main_frame = ctk.CTkFrame(self, fg_color="transparent")
         main_frame.pack(fill="both", expand=True, padx=30, pady=20)
         
-        main_frame.grid_columnconfigure(1, weight=3) # Give more space to output
+        main_frame.grid_columnconfigure(1, weight=3)
         main_frame.grid_columnconfigure(0, weight=1)
         main_frame.grid_rowconfigure(0, weight=1)
 
         # Left panel (file upload)
         left_frame = ctk.CTkFrame(main_frame, fg_color=LIGHT_BG, corner_radius=15)
         left_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 15), pady=10)
-        left_frame.pack_propagate(False) # Prevent frame from shrinking
+
+        # make it flexible vertically
+        left_frame.grid_rowconfigure(3, weight=1)
 
         desc = ctk.CTkLabel(left_frame, text=desc_text, wraplength=230,
                             text_color=PRIMARY_GREEN, justify="left",
                             font=("Segoe UI", 14, "normal"))
-        desc.pack(pady=15, padx=15)
+        desc.grid(row=0, column=0, pady=(15, 10), padx=15, sticky="ew")
 
-        # --- New Drop Zone ---
+        # --- Drop Zone ---
         self.drop_zone = ctk.CTkFrame(left_frame, fg_color=WHITE, border_width=2,
                                       border_color=DASHED_BORDER, corner_radius=10)
-        self.drop_zone.pack(fill="x", padx=15, pady=10)
+        self.drop_zone.grid(row=1, column=0, sticky="ew", padx=15, pady=10)
 
         drop_label = ctk.CTkLabel(self.drop_zone, text="Drag & Drop Image Here\n\n(or)",
                                   font=("Segoe UI", 13, "italic"), text_color=TEXT_GRAY)
@@ -198,34 +200,38 @@ class BaseModelPage(ctk.CTkFrame):
                                    fg_color=PRIMARY_GREEN, hover_color=ACCENT_GREEN,
                                    text_color=WHITE, command=self.select_file)
         upload_btn.pack(pady=(0, 20), padx=20)
-        
-        # --- New Image Preview ---
-        self.image_preview_label = ctk.CTkLabel(left_frame, text="",
+
+        # --- Image Preview ---
+        self.image_preview_label = ctk.CTkLabel(left_frame, text="No image selected",
                                                 fg_color=LIGHTER_BG, corner_radius=8,
-                                                height=180)
-        self.image_preview_label.pack(fill="x", expand=True, padx=15, pady=10)
+                                                height=160)
+        self.image_preview_label.grid(row=2, column=0, sticky="ew", padx=15, pady=10)
 
         # --- Submit Button ---
-        submit_btn = ctk.CTkButton(left_frame, text="Submit", fg_color=ACCENT_GREEN,
-                                   hover_color=PRIMARY_GREEN, text_color=WHITE,
-                                   font=("Segoe UI", 16, "bold"), height=40,
-                                   command=self.process_file)
-        submit_btn.pack(side="bottom", fill="x", padx=15, pady=15)
-        
+        submit_btn = ctk.CTkButton(
+            left_frame,
+            text="Submit",
+            fg_color=ACCENT_GREEN,
+            hover_color=PRIMARY_GREEN,
+            text_color=WHITE,
+            font=("Segoe UI", 16, "bold"),
+            height=45,
+            corner_radius=10,
+            command=self.process_file
+        )
+        submit_btn.grid(row=4, column=0, sticky="ew", padx=20, pady=(10, 20))
+
+        # --- Make sure grid expands properly ---
+        for i in range(5):
+            left_frame.grid_rowconfigure(i, weight=0)
+        left_frame.grid_rowconfigure(3, weight=1)  # allow middle section to stretch
+
         # --- DND Bindings ---
         if DND_AVAILABLE:
-            # Must register the drop target on a TkinterDnD.Tk object
-            # Easiest way is to make the app itself the DND root
-            if not isinstance(self.controller, TkinterDnD.Tk):
-                self.controller_dnd = TkinterDnD.Tk()
-                self.controller_dnd.withdraw() # Hide the extra root window
-            
-            # Register the drop zone widget
             self.drop_zone.drop_target_register(DND_FILES)
             self.drop_zone.dnd_bind('<<Drop>>', self.on_file_drop)
             self.drop_zone.dnd_bind('<<DragEnter>>', self.on_drag_enter)
             self.drop_zone.dnd_bind('<<DragLeave>>', self.on_drag_leave)
-
 
         # Right panel (output)
         right_frame = ctk.CTkFrame(main_frame, fg_color=LIGHTER_BG, corner_radius=15)

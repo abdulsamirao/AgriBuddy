@@ -2,14 +2,9 @@ import customtkinter as ctk
 from tkinter import filedialog
 from PIL import Image  # Used for image previews
 
-# Optional: enable drag-and-drop if tkinterdnd2 is available
-try:
-    from tkinterdnd2 import DND_FILES, TkinterDnD
-    DND_AVAILABLE = True
-except ImportError:
-    DND_AVAILABLE = False
-    print("tkinterdnd2-tk not found. Drag-and-drop will be disabled.")
-    print("Install it with: pip install tkinterdnd2-tk")
+from classifier_engine import TomatoLeafDiseaseClassifier, AgriculturePestClassifier, MangoDiseaseClassifier, CottonDiseaseClassifier
+
+from tkinterdnd2 import DND_FILES, TkinterDnD
 
 
 # ---------------------------
@@ -30,9 +25,11 @@ ctk.set_default_color_theme("green")
 # ---------------------------
 #  Main App Class
 # ---------------------------
-class AgriBuddyApp(ctk.CTk):
+class AgriBuddyApp(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self):
         super().__init__()
+        self.TkdndVersion = TkinterDnD._require(self)
+        
         self.title("AgriBuddy 🌱")
         self.geometry("900x600")
         self.minsize(800, 500)
@@ -102,7 +99,7 @@ class HomePage(ctk.CTkFrame):
             ("Weather Impact Model", "ML4Page")
         ]
 
-        for i, (label, page) in enumerate(models):
+        for i, (label, page) in enumerate[tuple[str, str]](models):
             # Shadow effect frame
             shadow = ctk.CTkFrame(grid_frame, fg_color="#D9F0E0", corner_radius=18)
             shadow.grid(row=i // 2, column=i % 2, padx=35, pady=30)
@@ -163,7 +160,7 @@ class BaseModelPage(ctk.CTkFrame):
                                    fg_color=ACCENT_GREEN, hover_color="#39A96B",
                                    font=("Segoe UI", 16),
                                    command=self.toggle_theme)
-        self.theme_button.pack(side="right", padx=15, pady=10)
+        #self.theme_button.pack(side="right", padx=15, pady=10)
 
                 # ---------------------------
         # Main Layout
@@ -227,11 +224,10 @@ class BaseModelPage(ctk.CTkFrame):
         left_frame.grid_rowconfigure(3, weight=1)  # allow middle section to stretch
 
         # --- DND Bindings ---
-        if DND_AVAILABLE:
-            self.drop_zone.drop_target_register(DND_FILES)
-            self.drop_zone.dnd_bind('<<Drop>>', self.on_file_drop)
-            self.drop_zone.dnd_bind('<<DragEnter>>', self.on_drag_enter)
-            self.drop_zone.dnd_bind('<<DragLeave>>', self.on_drag_leave)
+        self.drop_zone.drop_target_register(DND_FILES)
+        self.drop_zone.dnd_bind('<<Drop>>', self.on_file_drop)
+        self.drop_zone.dnd_bind('<<DragEnter>>', self.on_drag_enter)
+        self.drop_zone.dnd_bind('<<DragLeave>>', self.on_drag_leave)
 
         # Right panel (output)
         right_frame = ctk.CTkFrame(main_frame, fg_color=LIGHTER_BG, corner_radius=15)
@@ -265,13 +261,11 @@ class BaseModelPage(ctk.CTkFrame):
     
     def on_file_drop(self, event):
         """Handles the file drop event."""
-        # event.data is a string of one or more file paths,
-        # sometimes with curly braces
-        file_path = event.data.strip("{}")
+        # event.data = "{FilePath1} {FilePath2}"
         
-        # Handle cases with multiple files (take the first one)
-        if " " in file_path:
-            file_path = file_path.split(" ")[0]
+        file_paths: list[str] = event.data.strip("{}").split("} {")
+        
+        file_path = file_paths[0]
 
         self.selected_file_path = file_path
         self.load_and_display_image(file_path)
@@ -360,11 +354,11 @@ class BaseModelPage(ctk.CTkFrame):
         
         # Clear selection after processing
         self.selected_file_path = None
-        self.image_preview_label.configure(image=None, text="")
+        self.image_preview_label.configure(image="", text="")
 
     def get_theme_icon(self):
         """Returns the correct icon based on the current theme."""
-        return "☀️" if ctk.get_appearance_mode() == "Dark" else "🌙"
+        return "Light Theme" if ctk.get_appearance_mode() == "Dark" else "Dark Theme"
 
     def toggle_theme(self):
         """Toggles the app's appearance mode between light and dark."""
@@ -408,15 +402,5 @@ class ML4Page(BaseModelPage):
 #  Run the App
 # ---------------------------
 if __name__ == "__main__":
-    # Note: If DND doesn't work, your app instance might need to be
-    # the TkinterDnD.Tk() object itself, but this setup usually works.
-    
     app = AgriBuddyApp()
-    
-    # If DND still gives trouble, you might try this:
-    # if DND_AVAILABLE:
-    #     app = AgriBuddyApp(TkinterDnD.Tk())
-    # else:
-    #     app = AgriBuddyApp(ctk.CTk())
-    
     app.mainloop()

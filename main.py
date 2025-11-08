@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from tkinter import filedialog
+from tkinter import filedialog, PhotoImage
 from PIL import Image
 
 from classifier_engine import BaseClassifier, \
@@ -31,7 +31,9 @@ class AgriBuddyApp(ctk.CTk, TkinterDnD.DnDWrapper):
         super().__init__()
         self.TkdndVersion = TkinterDnD._require(self)
         
-        self.title("AgriBuddy 🌱")
+        self.title("AgriBuddy")
+        self.wm_iconbitmap("icons/icon.ico")
+        self.wm_iconphoto(True, PhotoImage(file="icons/icon.png"))
         self.geometry("900x600")
         self.minsize(800, 500)
         self.is_fullscreen = False
@@ -319,15 +321,15 @@ class BaseModelPage(ctk.CTkFrame):
         self.output_box.delete("1.0", "end")
         self.output_box.insert("end", "✅ Processing Complete!\n\n")
         self.output_box.insert("end", f"File: {self.selected_file_path.split('/')[-1]}\n\n")
-        self.output_box.insert("end", f"Detected Disease:\t{disease_name}\n")
-        self.output_box.insert("end", f"Confidence:\t{confidence:.2f}%\n\n")
+        self.output_box.insert("end", f"Detected Disease: {disease_name}\n")
+        self.output_box.insert("end", f"Confidence: {confidence:.2f}%\n\n")
 
 
 # Individual ML Model Pages
 class TomatoPage(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         "Tomato Leaf Disease Classifier",
+                         "🍅 Tomato Leaf Disease Classifier",
                          "Upload an image of a tomato leaf. The model will analyze it and identify the disease.",
                          TomatoLeafDiseaseClassifier())
 
@@ -335,7 +337,7 @@ class TomatoPage(BaseModelPage):
 class MangoPage(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         "Mango Leaf Disease Classifier",
+                         "🥭 Mango Leaf Disease Classifier",
                          "Upload an image of a mango leaf. The model will analyze it and identify the disease.",
                          MangoDiseaseClassifier())
 
@@ -343,7 +345,7 @@ class MangoPage(BaseModelPage):
 class CottonPage(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         "Cotton Leaf Disease Classifier",
+                         "🌿 Cotton Leaf Disease Classifier",
                          "Upload an image of a cotton leaf. The model will analyze it and identify the disease.",
                          CottonDiseaseClassifier())
 
@@ -351,7 +353,7 @@ class CottonPage(BaseModelPage):
 class PestPage(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         "Agricultural Pest Classifier",
+                         "🐞 Agricultural Pest Classifier",
                          "Upload an image of an agricultural pest. The model will analyze it and find out what species it is.",
                          AgriculturePestClassifier())
     
@@ -362,8 +364,8 @@ class PestPage(BaseModelPage):
         self.output_box.delete("1.0", "end")
         self.output_box.insert("end", "✅ Processing Complete!\n\n")
         self.output_box.insert("end", f"File: {self.selected_file_path.split('/')[-1]}\n\n")
-        self.output_box.insert("end", f"Detected Pest:\t{disease_name}\n")
-        self.output_box.insert("end", f"Confidence:\t{confidence:.2f}%\n\n")
+        self.output_box.insert("end", f"Detected Pest: {disease_name}\n")
+        self.output_box.insert("end", f"Confidence: {confidence:.2f}%\n\n")
 
 
 # ---------------------------

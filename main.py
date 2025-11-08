@@ -1,15 +1,17 @@
 import customtkinter as ctk
 from tkinter import filedialog
-from PIL import Image  # Used for image previews
+from PIL import Image
 
-from classifier_engine import BaseClassifier, TomatoLeafDiseaseClassifier, AgriculturePestClassifier, MangoDiseaseClassifier, CottonDiseaseClassifier
+from classifier_engine import BaseClassifier, \
+                            TomatoLeafDiseaseClassifier, \
+                            AgriculturePestClassifier, \
+                            MangoDiseaseClassifier, \
+                            CottonDiseaseClassifier
 
 from tkinterdnd2 import DND_FILES, TkinterDnD
 
 
-# ---------------------------
-#  Theme Configuration
-# ---------------------------
+#  Color configuration
 PRIMARY_GREEN = "#0A6847"
 ACCENT_GREEN = "#128C7E"
 LIGHT_BG = "#E8F5E9"         # Light green for panels
@@ -22,9 +24,8 @@ ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("green")
 
 
-# ---------------------------
-#  Main App Class
-# ---------------------------
+# Main app window
+# Inherits from both CTk and DnDWrapper
 class AgriBuddyApp(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self):
         super().__init__()
@@ -36,7 +37,7 @@ class AgriBuddyApp(ctk.CTk, TkinterDnD.DnDWrapper):
         self.is_fullscreen = False
         self.frames = {}
 
-        # Key bindings
+        # Full screen toggle
         self.bind("<F11>", self.toggle_fullscreen)
         self.bind("<Escape>", self.end_fullscreen)
 
@@ -46,7 +47,8 @@ class AgriBuddyApp(ctk.CTk, TkinterDnD.DnDWrapper):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
-        for F in (HomePage, TomatoPage, PestPage, MangoPage, CottonPage):
+        # Add each page to dict for showing it
+        for F in (HomePage, TomatoPage, MangoPage, CottonPage, PestPage):
             frame = F(parent=container, controller=self)
             self.frames[F.__name__] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -68,15 +70,13 @@ class AgriBuddyApp(ctk.CTk, TkinterDnD.DnDWrapper):
         return "break"
 
 
-# ---------------------------
-#  Home Page
-# ---------------------------
+# The page containing the options to select the model
 class HomePage(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, fg_color=WHITE)
         self.controller = controller
 
-        # Title
+        # Title frame (add gap between title and the top of window)
         title_frame = ctk.CTkFrame(self, fg_color="transparent")
         title_frame.pack(pady=(40, 20))
         
@@ -88,15 +88,14 @@ class HomePage(ctk.CTkFrame):
         subtitle.pack(pady=5)
 
         # Centered grid for model buttons
-        # This frame acts as a "card"
         grid_frame = ctk.CTkFrame(self, fg_color=WHITE)
         grid_frame.pack(expand=True, pady=0, padx=0, ipady=0, ipadx=0)
 
         models = [
             ("Tomato Leaf Disease", "TomatoPage"),
-            ("Agricultural Pest", "PestPage"),
             ("Mango Leaf Disease", "MangoPage"),
-            ("Cotton Leaf Disease", "CottonPage")
+            ("Cotton Leaf Disease", "CottonPage"),
+            ("Agricultural Pest", "PestPage"),
         ]
 
         for i, (label, page) in enumerate[tuple[str, str]](models):
@@ -118,18 +117,16 @@ class HomePage(ctk.CTkFrame):
                 border_color=LIGHT_BG,
                 command=lambda p=page: controller.show_frame(p)
             )
-            #button.grid(row=i // 2, column=i % 2, padx=25, pady=25)
+            
             button.pack(padx=5, pady=5)
 
         # Footer
-        footer = ctk.CTkLabel(self, text="© 2025 AgriBuddy | All Rights Reserved",
-                              font=("Segoe UI", 11), text_color=TEXT_GRAY)
+        footer = ctk.CTkLabel(self, text="© 2025 AgriBuddy | All Rights Reserved", font=("Segoe UI", 11), text_color=TEXT_GRAY)
         footer.pack(side="bottom", pady=10)
 
 
-# ---------------------------
-#  Base Class for ML Pages
-# ---------------------------
+
+#  Base class for model pages
 class BaseModelPage(ctk.CTkFrame):
     def __init__(self, parent, controller, title_text, desc_text, model: BaseClassifier):
         super().__init__(parent, fg_color=WHITE)
@@ -137,9 +134,7 @@ class BaseModelPage(ctk.CTkFrame):
         self.selected_file_path = None # Store the path to the selected file
         self.model = model
 
-        # ---------------------------
-        # Navigation Bar
-        # ---------------------------
+        # Navigation bar
         nav_frame = ctk.CTkFrame(self, fg_color=PRIMARY_GREEN, height=60, corner_radius=0)
         nav_frame.pack(fill="x", side="top")
 
@@ -153,20 +148,8 @@ class BaseModelPage(ctk.CTkFrame):
                              font=("Segoe UI", 22, "bold"), text_color=WHITE)
         title.pack(side="left", expand=True, pady=10)
 
-        version_label = ctk.CTkLabel(nav_frame, text="v1.1", font=("Segoe UI", 12),
-                                     text_color=WHITE)
-        #version_label.pack(side="right", padx=10)
 
-        # Theme toggle button
-        self.theme_button = ctk.CTkButton(nav_frame, text=self.get_theme_icon(), width=35, height=30,
-                                   fg_color=ACCENT_GREEN, hover_color="#39A96B",
-                                   font=("Segoe UI", 16),
-                                   command=self.toggle_theme)
-        #self.theme_button.pack(side="right", padx=15, pady=10)
-
-                # ---------------------------
-        # Main Layout
-        # ---------------------------
+        # Main body
         main_frame = ctk.CTkFrame(self, fg_color="transparent")
         main_frame.pack(fill="both", expand=True, padx=30, pady=20)
         
@@ -175,7 +158,7 @@ class BaseModelPage(ctk.CTkFrame):
         main_frame.grid_rowconfigure(0, weight=1)
 
         # Left panel (file upload)
-        left_frame = ctk.CTkScrollableFrame(main_frame, fg_color=LIGHT_BG, corner_radius=15)
+        left_frame = ctk.CTkFrame(main_frame, fg_color=LIGHT_BG, corner_radius=15)
         left_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 15), pady=10)
 
         # make it flexible vertically
@@ -186,7 +169,7 @@ class BaseModelPage(ctk.CTkFrame):
                             font=("Segoe UI", 14, "normal"))
         desc.grid(row=0, column=0, pady=(15, 10), padx=15, sticky="ew")
 
-        # --- Drop Zone ---
+        # File drop frame
         self.drop_zone = ctk.CTkFrame(left_frame, fg_color=WHITE, border_width=2,
                                       border_color=DASHED_BORDER, corner_radius=10)
         self.drop_zone.grid(row=1, column=0, sticky="ew", padx=15, pady=10)
@@ -200,13 +183,13 @@ class BaseModelPage(ctk.CTkFrame):
                                    text_color=WHITE, command=self.select_file)
         upload_btn.pack(pady=(0, 20), padx=20)
 
-        # --- Image Preview ---
+        # Image preview
         self.image_preview_label = ctk.CTkLabel(left_frame, text="No image selected",
                                                 fg_color=LIGHTER_BG, corner_radius=8,
                                                 height=160)
         self.image_preview_label.grid(row=2, column=0, sticky="ew", padx=15, pady=10)
 
-        # --- Submit Button ---
+        # Submit button
         submit_btn = ctk.CTkButton(
             left_frame,
             text="Submit",
@@ -220,12 +203,11 @@ class BaseModelPage(ctk.CTkFrame):
         )
         submit_btn.grid(row=4, column=0, sticky="ew", padx=20, pady=(10, 20))
 
-        # --- Make sure grid expands properly ---
+        # Make sure grid expands properly
         for i in range(5):
-            left_frame.grid_rowconfigure(i, weight=0)
-        left_frame.grid_rowconfigure(3, weight=1)  # allow middle section to stretch
+            left_frame.grid_rowconfigure(i, weight=1 if i == 3 else 0) # allow middle section (row 3) to stretch (empty row)
 
-        # --- DND Bindings ---
+        # DND Bindings
         self.drop_zone.drop_target_register(DND_FILES)
         self.drop_zone.dnd_bind('<<Drop>>', self.on_file_drop)
         self.drop_zone.dnd_bind('<<DragEnter>>', self.on_drag_enter)
@@ -247,9 +229,8 @@ class BaseModelPage(ctk.CTkFrame):
         self.output_box.insert("end", "Model output will appear here...\n")
         self.output_box.configure(state="disabled")
 
-    # ---------------------------
-    # Helper Methods
-    # ---------------------------
+    
+    
 
     def on_drag_enter(self, event):
         """Visual feedback when dragging over the drop zone."""
@@ -299,7 +280,6 @@ class BaseModelPage(ctk.CTkFrame):
             image = Image.open(file_path)
             
             # Create a thumbnail
-                 
             image.thumbnail((200, 160))
             
             ctk_img = ctk.CTkImage(light_image=image, size=(image.width, image.height))
@@ -329,54 +309,33 @@ class BaseModelPage(ctk.CTkFrame):
         predicted_class, confidence = self.model.predict(self.selected_file_path)
         
         self.display_result(predicted_class, confidence)
+        
+        self.output_box.configure(state="disabled")
 
     def display_result(self, predicted_class, confidence):
-        """Shows a placeholder result in the output box."""
-        # Placeholder data - replace with actual model output
         disease_name = predicted_class
         confidence = confidence * 100
 
         self.output_box.delete("1.0", "end")
         self.output_box.insert("end", "✅ Processing Complete!\n\n")
-        self.output_box.insert("end", f"File:\t\t{self.selected_file_path.split('/')[-1]}\n\n")
+        self.output_box.insert("end", f"File: {self.selected_file_path.split('/')[-1]}\n\n")
         self.output_box.insert("end", f"Detected Disease:\t{disease_name}\n")
-        self.output_box.insert("end", f"Confidence Score:\t{confidence:.2f}\n\n")
-        self.output_box.configure(state="disabled")
-
-    def get_theme_icon(self):
-        """Returns the correct icon based on the current theme."""
-        return "Light Theme" if ctk.get_appearance_mode() == "Dark" else "Dark Theme"
-
-    def toggle_theme(self):
-        """Toggles the app's appearance mode between light and dark."""
-        new_mode = "dark" if ctk.get_appearance_mode() == "Light" else "light"
-        ctk.set_appearance_mode(new_mode)
-        self.theme_button.configure(text=self.get_theme_icon())
+        self.output_box.insert("end", f"Confidence:\t{confidence:.2f}%\n\n")
 
 
-# ---------------------------
-#  ML Model Pages
-# ---------------------------
+# Individual ML Model Pages
 class TomatoPage(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         "Model 1 - Tomato Leaf Disease",
+                         "Tomato Leaf Disease Classifier",
                          "Upload an image of a tomato leaf. The model will analyze it and identify the disease.",
                          TomatoLeafDiseaseClassifier())
-
-
-class PestPage(BaseModelPage):
-    def __init__(self, parent, controller):
-        super().__init__(parent, controller,
-                         "Model 2 - Agricultural Pest",
-                         "Upload an image of an agricultural pest. The model will analyze it and find out what species it is.",
-                         AgriculturePestClassifier())
 
 
 class MangoPage(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         "Model 3 - Mango Leaf Disease",
+                         "Mango Leaf Disease Classifier",
                          "Upload an image of a mango leaf. The model will analyze it and identify the disease.",
                          MangoDiseaseClassifier())
 
@@ -384,9 +343,27 @@ class MangoPage(BaseModelPage):
 class CottonPage(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         "Model 4 - Cotton Leaf Disease",
+                         "Cotton Leaf Disease Classifier",
                          "Upload an image of a cotton leaf. The model will analyze it and identify the disease.",
                          CottonDiseaseClassifier())
+
+
+class PestPage(BaseModelPage):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller,
+                         "Agricultural Pest Classifier",
+                         "Upload an image of an agricultural pest. The model will analyze it and find out what species it is.",
+                         AgriculturePestClassifier())
+    
+    def display_result(self, predicted_class, confidence):
+        disease_name = predicted_class
+        confidence = confidence * 100
+
+        self.output_box.delete("1.0", "end")
+        self.output_box.insert("end", "✅ Processing Complete!\n\n")
+        self.output_box.insert("end", f"File: {self.selected_file_path.split('/')[-1]}\n\n")
+        self.output_box.insert("end", f"Detected Pest:\t{disease_name}\n")
+        self.output_box.insert("end", f"Confidence:\t{confidence:.2f}%\n\n")
 
 
 # ---------------------------

@@ -73,14 +73,14 @@ class AgriBuddyApp(ctk.CTk, TkinterDnD.DnDWrapper):
 # ---------------------------
 class HomePage(ctk.CTkFrame):
     def __init__(self, parent, controller):
-        super().__init__(parent, fg_color=LIGHTER_BG) # Use lighter bg for main
+        super().__init__(parent, fg_color=WHITE)
         self.controller = controller
 
         # Title
         title_frame = ctk.CTkFrame(self, fg_color="transparent")
         title_frame.pack(pady=(40, 20))
         
-        title = ctk.CTkLabel(title_frame, text="🌾 AgriBuddy", font=("Segoe UI", 32, "bold"), text_color=PRIMARY_GREEN)
+        title = ctk.CTkLabel(title_frame, text="AgriBuddy🌾", font=("Segoe UI", 32, "bold"), text_color=PRIMARY_GREEN)
         title.pack(side="left", padx=10)
 
         subtitle = ctk.CTkLabel(self, text="Your AI Assistant for Smart Farming",
@@ -89,20 +89,20 @@ class HomePage(ctk.CTkFrame):
 
         # Centered grid for model buttons
         # This frame acts as a "card"
-        grid_frame = ctk.CTkFrame(self, fg_color=WHITE, corner_radius=15)
-        grid_frame.pack(expand=True, pady=30, padx=50, ipady=20, ipadx=20)
+        grid_frame = ctk.CTkFrame(self, fg_color=WHITE)
+        grid_frame.pack(expand=True, pady=0, padx=0, ipady=0, ipadx=0)
 
         models = [
-            ("Leaf Disease Detection", "ML1Page"),
-            ("Soil Quality Analysis", "ML2Page"),
-            ("Crop Yield Prediction", "ML3Page"),
-            ("Weather Impact Model", "ML4Page")
+            ("Tomato Leaf Disease", "ML1Page"),
+            ("Agricultural Pest", "ML2Page"),
+            ("Mango Leaf Disease", "ML3Page"),
+            ("Cotton Leaf Disease", "ML4Page")
         ]
 
         for i, (label, page) in enumerate[tuple[str, str]](models):
             # Shadow effect frame
             shadow = ctk.CTkFrame(grid_frame, fg_color="#D9F0E0", corner_radius=18)
-            shadow.grid(row=i // 2, column=i % 2, padx=35, pady=30)
+            shadow.grid(row=i // 2, column=i % 2, padx=25, pady=25)
 
             button = ctk.CTkButton(
                 shadow,
@@ -114,11 +114,12 @@ class HomePage(ctk.CTkFrame):
                 fg_color=PRIMARY_GREEN,
                 hover_color="#39A96B",
                 text_color=WHITE,
-                border_width=1,
+                border_width=0,
                 border_color=LIGHT_BG,
                 command=lambda p=page: controller.show_frame(p)
             )
-            button.pack(padx=3, pady=3)
+            #button.grid(row=i // 2, column=i % 2, padx=25, pady=25)
+            button.pack(padx=5, pady=5)
 
         # Footer
         footer = ctk.CTkLabel(self, text="© 2025 AgriBuddy | All Rights Reserved",
@@ -141,11 +142,11 @@ class BaseModelPage(ctk.CTkFrame):
         nav_frame = ctk.CTkFrame(self, fg_color=PRIMARY_GREEN, height=60, corner_radius=0)
         nav_frame.pack(fill="x", side="top")
 
-        home_btn = ctk.CTkButton(nav_frame, text="🏠 Home", width=90, fg_color=WHITE,
+        home_btn = ctk.CTkButton(nav_frame, text="Home", width=90, fg_color=WHITE,
                                  text_color=PRIMARY_GREEN, hover_color=LIGHT_BG,
                                  font=("Segoe UI", 14, "bold"),
                                  command=lambda: controller.show_frame("HomePage"))
-        home_btn.pack(side="left", padx=20, pady=10)
+        home_btn.pack(side="left", padx=10, pady=10)
 
         title = ctk.CTkLabel(nav_frame, text=title_text,
                              font=("Segoe UI", 22, "bold"), text_color=WHITE)
@@ -373,29 +374,29 @@ class BaseModelPage(ctk.CTkFrame):
 class ML1Page(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         "Model 1 - Leaf Disease Detection",
-                         "Upload an image of a plant leaf. The model will analyze it and identify potential diseases.")
+                         "Model 1 - Tomato Leaf Disease",
+                         "Upload an image of a tomato leaf. The model will analyze it and identify the disease.")
 
 
 class ML2Page(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         "Model 2 - Soil Quality Analysis",
-                         "Upload soil data (e.g., CSV, JSON). This model will analyze composition and suggest crop compatibility.")
+                         "Model 2 - Agricultural Pest",
+                         "Upload an image of an agricultural pest. The model will analyze it and find out what species it is.")
 
 
 class ML3Page(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         "Model 3 - Crop Yield Prediction",
-                         "Input environmental data, crop type, and acreage to receive an estimated yield prediction.")
+                         "Model 3 - Mango Leaf Disease",
+                         "Upload an image of a mango leaf. The model will analyze it and identify the disease.")
 
 
 class ML4Page(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         "Model 4 - Weather Impact Model",
-                         "Analyze historical and forecasted weather data to predict its impact on your crops.")
+                         "Model 4 - Cotton Leaf Disease",
+                         "Upload an image of a cotton leaf. The model will analyze it and identify the disease.")
 
 
 # ---------------------------

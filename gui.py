@@ -2,7 +2,7 @@ import customtkinter as ctk
 from tkinter import filedialog
 from PIL import Image  # Used for image previews
 
-from classifier_engine import TomatoLeafDiseaseClassifier, AgriculturePestClassifier, MangoDiseaseClassifier, CottonDiseaseClassifier
+from classifier_engine import BaseClassifier, TomatoLeafDiseaseClassifier, AgriculturePestClassifier, MangoDiseaseClassifier, CottonDiseaseClassifier
 
 from tkinterdnd2 import DND_FILES, TkinterDnD
 
@@ -46,7 +46,7 @@ class AgriBuddyApp(ctk.CTk, TkinterDnD.DnDWrapper):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
-        for F in (HomePage, ML1Page, ML2Page, ML3Page, ML4Page):
+        for F in (HomePage, TomatoPage, PestPage, MangoPage, CottonPage):
             frame = F(parent=container, controller=self)
             self.frames[F.__name__] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -93,10 +93,10 @@ class HomePage(ctk.CTkFrame):
         grid_frame.pack(expand=True, pady=0, padx=0, ipady=0, ipadx=0)
 
         models = [
-            ("Tomato Leaf Disease", "ML1Page"),
-            ("Agricultural Pest", "ML2Page"),
-            ("Mango Leaf Disease", "ML3Page"),
-            ("Cotton Leaf Disease", "ML4Page")
+            ("Tomato Leaf Disease", "TomatoPage"),
+            ("Agricultural Pest", "PestPage"),
+            ("Mango Leaf Disease", "MangoPage"),
+            ("Cotton Leaf Disease", "CottonPage")
         ]
 
         for i, (label, page) in enumerate[tuple[str, str]](models):
@@ -131,10 +131,11 @@ class HomePage(ctk.CTkFrame):
 #  Base Class for ML Pages
 # ---------------------------
 class BaseModelPage(ctk.CTkFrame):
-    def __init__(self, parent, controller, title_text, desc_text):
+    def __init__(self, parent, controller, title_text, desc_text, model: BaseClassifier):
         super().__init__(parent, fg_color=WHITE)
         self.controller = controller
         self.selected_file_path = None # Store the path to the selected file
+        self.model = model
 
         # ---------------------------
         # Navigation Bar
@@ -174,7 +175,7 @@ class BaseModelPage(ctk.CTkFrame):
         main_frame.grid_rowconfigure(0, weight=1)
 
         # Left panel (file upload)
-        left_frame = ctk.CTkFrame(main_frame, fg_color=LIGHT_BG, corner_radius=15)
+        left_frame = ctk.CTkScrollableFrame(main_frame, fg_color=LIGHT_BG, corner_radius=15)
         left_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 15), pady=10)
 
         # make it flexible vertically
@@ -279,7 +280,7 @@ class BaseModelPage(ctk.CTkFrame):
         """Opens a file dialog to select an image."""
         file_path = filedialog.askopenfilename(
             title="Select an image file",
-            filetypes=[("Image Files", "*.png *.jpg *.jpeg *.bmp *.gif")]
+            filetypes=[("Image Files", "*.png *.jpg *.jpeg *.bmp *.gif *.webp")]
         )
         if file_path:
             self.selected_file_path = file_path
@@ -289,7 +290,7 @@ class BaseModelPage(ctk.CTkFrame):
     def load_and_display_image(self, file_path):
         """Loads an image, creates a thumbnail, and displays it."""
         try:
-            if not file_path.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
+            if not file_path.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.webp')):
                 self.image_preview_label.configure(image=None, text="File is not a supported image.",
                                                    font=("Segoe UI", 12, "italic"))
                 self.selected_file_path = None # Clear invalid file
@@ -298,12 +299,8 @@ class BaseModelPage(ctk.CTkFrame):
             image = Image.open(file_path)
             
             # Create a thumbnail
-            preview_width = self.image_preview_label.winfo_width() - 20
-            preview_height = self.image_preview_label.winfo_height() - 20
-            if preview_width < 50 or preview_height < 50:
-                 preview_width, preview_height = 200, 160 # default fallback
                  
-            image.thumbnail((preview_width, preview_height))
+            image.thumbnail((200, 160))
             
             ctk_img = ctk.CTkImage(light_image=image, size=(image.width, image.height))
             
@@ -323,39 +320,28 @@ class BaseModelPage(ctk.CTkFrame):
         self.output_box.delete("1.0", "end")
 
         if not self.selected_file_path:
-            self.output_box.insert("end", "❌ Error: Please select an image file first.")
+            self.output_box.insert("end", "Error: Please select an image file first.")
             self.output_box.configure(state="disabled")
             return
 
-        self.output_box.insert("end", f"⏳ Processing file: {self.selected_file_path.split('/')[-1]}\n\n")
+        self.output_box.insert("end", f"Processing file: {self.selected_file_path.split('/')[-1]}\n\n")
         
-        # --- ML Model Integration Point ---
-        # This is where you would call your model.
-        # e.g., result = your_ml_model.predict(self.selected_file_path)
-        # For now, we use a placeholder.
-        # self.after(1200, lambda: self.display_placeholder_result(result))
+        predicted_class, confidence = self.model.predict(self.selected_file_path)
         
-        self.after(1200, self.display_placeholder_result) # Simulate processing time
+        self.display_result(predicted_class, confidence)
 
-    def display_placeholder_result(self):
+    def display_result(self, predicted_class, confidence):
         """Shows a placeholder result in the output box."""
         # Placeholder data - replace with actual model output
-        disease_name = "Apple Scab (Venturia inaequalis)"
-        confidence = "95.2%"
-        recommendation = "Apply recommended fungicides. Prune infected branches."
+        disease_name = predicted_class
+        confidence = confidence * 100
 
         self.output_box.delete("1.0", "end")
         self.output_box.insert("end", "✅ Processing Complete!\n\n")
         self.output_box.insert("end", f"File:\t\t{self.selected_file_path.split('/')[-1]}\n\n")
         self.output_box.insert("end", f"Detected Disease:\t{disease_name}\n")
-        self.output_box.insert("end", f"Confidence Score:\t{confidence}\n\n")
-        self.output_box.insert("end", f"Recommendation:\t{recommendation}\n\n")
-        self.output_box.insert("end", "--- (This is a placeholder result) ---")
+        self.output_box.insert("end", f"Confidence Score:\t{confidence:.2f}\n\n")
         self.output_box.configure(state="disabled")
-        
-        # Clear selection after processing
-        self.selected_file_path = None
-        self.image_preview_label.configure(image=None)
 
     def get_theme_icon(self):
         """Returns the correct icon based on the current theme."""
@@ -371,32 +357,36 @@ class BaseModelPage(ctk.CTkFrame):
 # ---------------------------
 #  ML Model Pages
 # ---------------------------
-class ML1Page(BaseModelPage):
+class TomatoPage(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
                          "Model 1 - Tomato Leaf Disease",
-                         "Upload an image of a tomato leaf. The model will analyze it and identify the disease.")
+                         "Upload an image of a tomato leaf. The model will analyze it and identify the disease.",
+                         TomatoLeafDiseaseClassifier())
 
 
-class ML2Page(BaseModelPage):
+class PestPage(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
                          "Model 2 - Agricultural Pest",
-                         "Upload an image of an agricultural pest. The model will analyze it and find out what species it is.")
+                         "Upload an image of an agricultural pest. The model will analyze it and find out what species it is.",
+                         AgriculturePestClassifier())
 
 
-class ML3Page(BaseModelPage):
+class MangoPage(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
                          "Model 3 - Mango Leaf Disease",
-                         "Upload an image of a mango leaf. The model will analyze it and identify the disease.")
+                         "Upload an image of a mango leaf. The model will analyze it and identify the disease.",
+                         MangoDiseaseClassifier())
 
 
-class ML4Page(BaseModelPage):
+class CottonPage(BaseModelPage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
                          "Model 4 - Cotton Leaf Disease",
-                         "Upload an image of a cotton leaf. The model will analyze it and identify the disease.")
+                         "Upload an image of a cotton leaf. The model will analyze it and identify the disease.",
+                         CottonDiseaseClassifier())
 
 
 # ---------------------------

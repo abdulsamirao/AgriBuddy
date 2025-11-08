@@ -153,7 +153,7 @@ class BaseModelPage(ctk.CTkFrame):
 
         version_label = ctk.CTkLabel(nav_frame, text="v1.1", font=("Segoe UI", 12),
                                      text_color=WHITE)
-        version_label.pack(side="right", padx=10)
+        #version_label.pack(side="right", padx=10)
 
         # Theme toggle button
         self.theme_button = ctk.CTkButton(nav_frame, text=self.get_theme_icon(), width=35, height=30,
@@ -193,7 +193,7 @@ class BaseModelPage(ctk.CTkFrame):
                                   font=("Segoe UI", 13, "italic"), text_color=TEXT_GRAY)
         drop_label.pack(pady=(20, 10))
 
-        upload_btn = ctk.CTkButton(self.drop_zone, text="📁 Choose File",
+        upload_btn = ctk.CTkButton(self.drop_zone, text="Choose File",
                                    fg_color=PRIMARY_GREEN, hover_color=ACCENT_GREEN,
                                    text_color=WHITE, command=self.select_file)
         upload_btn.pack(pady=(0, 20), padx=20)
@@ -354,7 +354,7 @@ class BaseModelPage(ctk.CTkFrame):
         
         # Clear selection after processing
         self.selected_file_path = None
-        self.image_preview_label.configure(image="", text="")
+        self.image_preview_label.configure(image=None)
 
     def get_theme_icon(self):
         """Returns the correct icon based on the current theme."""

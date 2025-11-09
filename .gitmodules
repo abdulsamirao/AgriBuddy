@@ -1,0 +1,3 @@
+[submodule "scripts/background-augmentation"]
+	path = scripts/background-augmentation
+	url = https://github.com/gitstorm1/background-augmentation.git

@@ -50,12 +50,12 @@ class AgriBuddyApp(ctk.CTk, TkinterDnD.DnDWrapper):
         container.grid_columnconfigure(0, weight=1)
 
         # Add each page to dict for showing it
-        for F in (HomePage, TomatoPage, MangoPage, CottonPage, PestPage):
+        for F in (LoginPage, SignUpPage, HomePage, TomatoPage, MangoPage, CottonPage, PestPage):
             frame = F(parent=container, controller=self)
             self.frames[F.__name__] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame("HomePage")
+        self.show_frame("LoginPage")
 
     def show_frame(self, name):
         frame = self.frames[name]
@@ -70,6 +70,240 @@ class AgriBuddyApp(ctk.CTk, TkinterDnD.DnDWrapper):
         self.is_fullscreen = False
         self.attributes("-fullscreen", False)
         return "break"
+
+
+# Login Page
+class LoginPage(ctk.CTkFrame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, fg_color=WHITE)
+        self.controller = controller
+        #self.auth_client = AuthClient()
+        
+        # Scroll frame
+        scroll_frame = ctk.CTkScrollableFrame(self, fg_color="transparent")
+        scroll_frame.pack(fill="both", expand=True)
+        
+        # Title frame
+        title_frame = ctk.CTkFrame(scroll_frame, fg_color="transparent")
+        title_frame.pack(pady=(60, 30))
+        
+        title = ctk.CTkLabel(title_frame, text="AgriBuddy🌾", 
+                            font=("Segoe UI", 36, "bold"), text_color=PRIMARY_GREEN)
+        title.pack()
+        
+        subtitle = ctk.CTkLabel(scroll_frame, text="Sign in to continue",
+                               font=("Segoe UI", 16), text_color=TEXT_GRAY)
+        subtitle.pack()
+        
+        # Login form frame
+        form_frame = ctk.CTkFrame(scroll_frame, fg_color=LIGHT_BG, corner_radius=15)
+        form_frame.pack(pady=(30, 20))
+        
+        # Email field
+        email_label = ctk.CTkLabel(form_frame, text="Email", 
+                                     font=("Segoe UI", 14, "bold"), text_color=PRIMARY_GREEN)
+        email_label.pack(pady=(30, 5), padx=30)
+        
+        self.email_entry = ctk.CTkEntry(form_frame, width=300, height=40,
+                                          font=("Segoe UI", 14), corner_radius=10)
+        self.email_entry.pack(pady=(0, 15), padx=30)
+        
+        # Password field
+        password_label = ctk.CTkLabel(form_frame, text="Password",
+                                     font=("Segoe UI", 14, "bold"), text_color=PRIMARY_GREEN)
+        password_label.pack(pady=(5, 5), padx=30)
+        
+        self.password_entry = ctk.CTkEntry(form_frame, width=300, height=40,
+                                          font=("Segoe UI", 14), corner_radius=10,
+                                          show="*")
+        self.password_entry.pack(pady=(0, 20), padx=30)
+        
+        # Error message label
+        self.error_label = ctk.CTkLabel(form_frame, text="error test", 
+                                       font=("Segoe UI", 12), text_color="#FF0000")
+        self.error_label.pack(pady=(0, 10))
+        
+        # Login button
+        login_btn = ctk.CTkButton(form_frame, text="Login", width=300, height=45,
+                                 fg_color=PRIMARY_GREEN, hover_color=ACCENT_GREEN,
+                                 text_color=WHITE, font=("Segoe UI", 16, "bold"),
+                                 corner_radius=10, command=self.handle_login)
+        login_btn.pack(pady=(0, 20), padx=30)
+        
+        # Sign up link
+        signup_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
+        signup_frame.pack(pady=(0, 30))
+        
+        signup_text = ctk.CTkLabel(signup_frame, text="Don't have an account? ",
+                                  font=("Segoe UI", 12), text_color=TEXT_GRAY)
+        signup_text.pack(side="left")
+        
+        signup_link = ctk.CTkButton(signup_frame, text="Sign Up", 
+                                   fg_color="transparent", hover_color=LIGHT_BG,
+                                   text_color=ACCENT_GREEN, font=("Segoe UI", 12, "bold"),
+                                   command=lambda: controller.show_frame("SignUpPage"),
+                                   width=80, height=20)
+        signup_link.pack(side="left")
+        
+        # Bind Enter key to login
+        self.password_entry.bind("<Return>", lambda e: self.handle_login())
+    
+    def handle_login(self):
+        """Handle login button click."""
+        username = self.username_entry.get().strip()
+        password = self.password_entry.get()
+        
+        if not username or not password:
+            self.error_label.configure(text="Please enter both username and password")
+            return
+        
+        # Disable UI during login
+        self.error_label.configure(text="Logging in...", text_color=ACCENT_GREEN)
+        
+        # Perform login in a separate thread to avoid blocking UI
+        def login_thread():
+            success, message = self.auth_client.login(username, password)
+            self.after(0, lambda: self.login_callback(success, message))
+        
+        #threading.Thread(target=login_thread, daemon=True).start()
+    
+    def login_callback(self, success: bool, message: str):
+        """Callback after login attempt."""
+        if success:
+            self.error_label.configure(text="", text_color="#FF0000")
+            self.controller.show_frame("HomePage")
+        else:
+            self.error_label.configure(text=message, text_color="#FF0000")
+
+
+# Sign Up Page
+class SignUpPage(ctk.CTkFrame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, fg_color=WHITE)
+        self.controller = controller
+        #self.auth_client = AuthClient()
+        
+        # Scroll frame
+        scroll_frame = ctk.CTkScrollableFrame(self, fg_color="transparent")
+        scroll_frame.pack(fill="both", expand=True)
+        
+        # Title frame
+        title_frame = ctk.CTkFrame(scroll_frame, fg_color="transparent")
+        title_frame.pack(pady=40)
+        
+        title = ctk.CTkLabel(title_frame, text="Create Account",
+                            font=("Segoe UI", 32, "bold"), text_color=PRIMARY_GREEN)
+        title.pack()
+        
+        # Sign up form frame
+        form_frame = ctk.CTkFrame(scroll_frame, fg_color=LIGHT_BG, corner_radius=15)
+        form_frame.pack(pady=(0, 20))
+        
+        # Username field
+        username_label = ctk.CTkLabel(form_frame, text="Username",
+                                     font=("Segoe UI", 14, "bold"), text_color=PRIMARY_GREEN)
+        username_label.pack(pady=(25, 5), padx=30)
+        
+        self.username_entry = ctk.CTkEntry(form_frame, width=300, height=40,
+                                          font=("Segoe UI", 14), corner_radius=10)
+        self.username_entry.pack(pady=(0, 10), padx=30)
+        
+        # Email field
+        email_label = ctk.CTkLabel(form_frame, text="Email",
+                                  font=("Segoe UI", 14, "bold"), text_color=PRIMARY_GREEN)
+        email_label.pack(pady=(5, 5), padx=30)
+        
+        self.email_entry = ctk.CTkEntry(form_frame, width=300, height=40,
+                                       font=("Segoe UI", 14), corner_radius=10)
+        self.email_entry.pack(pady=(0, 10), padx=30)
+        
+        # Password field
+        password_label = ctk.CTkLabel(form_frame, text="Password",
+                                     font=("Segoe UI", 14, "bold"), text_color=PRIMARY_GREEN)
+        password_label.pack(pady=(5, 5), padx=30)
+        
+        self.password_entry = ctk.CTkEntry(form_frame, width=300, height=40,
+                                          font=("Segoe UI", 14), corner_radius=10,
+                                          show="*")
+        self.password_entry.pack(pady=(0, 10), padx=30)
+        
+        # Confirm password field
+        confirm_password_label = ctk.CTkLabel(form_frame, text="Confirm Password",
+                                             font=("Segoe UI", 14, "bold"), text_color=PRIMARY_GREEN)
+        confirm_password_label.pack(pady=(5, 5), padx=30)
+        
+        self.confirm_password_entry = ctk.CTkEntry(form_frame, width=300, height=40,
+                                                   font=("Segoe UI", 14), corner_radius=10,
+                                                   show="*")
+        self.confirm_password_entry.pack(pady=(0, 20), padx=30)
+        
+        # Error message label
+        self.error_label = ctk.CTkLabel(form_frame, text="error test",
+                                       font=("Segoe UI", 12), text_color="#FF0000")
+        self.error_label.pack(pady=(0, 10))
+        
+        # Sign up button
+        signup_btn = ctk.CTkButton(form_frame, text="Sign Up", width=300, height=45,
+                                  fg_color=ACCENT_GREEN, hover_color=PRIMARY_GREEN,
+                                  text_color=WHITE, font=("Segoe UI", 16, "bold"),
+                                  corner_radius=10, command=self.handle_signup)
+        signup_btn.pack(pady=(0, 20), padx=30)
+        
+        # Login link
+        login_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
+        login_frame.pack(pady=(0, 25))
+        
+        login_text = ctk.CTkLabel(login_frame, text="Already have an account? ",
+                                 font=("Segoe UI", 12), text_color=TEXT_GRAY)
+        login_text.pack(side="left")
+        
+        login_link = ctk.CTkButton(login_frame, text="Login",
+                                  fg_color="transparent", hover_color=LIGHT_BG,
+                                  text_color=ACCENT_GREEN, font=("Segoe UI", 12, "bold"),
+                                  command=lambda: controller.show_frame("LoginPage"),
+                                  width=80, height=20)
+        login_link.pack(side="left")
+        
+        # Bind Enter key to signup
+        self.confirm_password_entry.bind("<Return>", lambda e: self.handle_signup())
+    
+    def handle_signup(self):
+        """Handle sign up button click."""
+        username = self.username_entry.get().strip()
+        email = self.email_entry.get().strip()
+        password = self.password_entry.get()
+        confirm_password = self.confirm_password_entry.get()
+        
+        # Validation
+        if not username or not email or not password or not confirm_password:
+            self.error_label.configure(text="Please fill in all fields")
+            return
+        
+        if password != confirm_password:
+            self.error_label.configure(text="Passwords do not match")
+            return
+        
+        if len(password) < 6:
+            self.error_label.configure(text="Password must be at least 6 characters long")
+            return
+        
+        # Disable UI during signup
+        self.error_label.configure(text="Creating account...", text_color=ACCENT_GREEN)
+        
+        # Perform signup in a separate thread
+        def signup_thread():
+            success, message = self.auth_client.signup(username, email, password)
+            self.after(0, lambda: self.signup_callback(success, message))
+        
+        #threading.Thread(target=signup_thread, daemon=True).start()
+    
+    def signup_callback(self, success: bool, message: str):
+        """Callback after signup attempt."""
+        if success:
+            self.error_label.configure(text="", text_color="#FF0000")
+            self.controller.show_frame("HomePage")
+        else:
+            self.error_label.configure(text=message, text_color="#FF0000")
 
 
 # The page containing the options to select the model

@@ -9,6 +9,7 @@ from classifier_engine import BaseClassifier, \
                             CottonDiseaseClassifier
 
 from tkinterdnd2 import DND_FILES, TkinterDnD
+from database import init_database, create_user, authenticate_user
 
 
 #  Color configuration
@@ -30,6 +31,9 @@ class AgriBuddyApp(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self):
         super().__init__()
         self.TkdndVersion = TkinterDnD._require(self)
+        
+        # Initialize database
+        init_database()
         
         self.title("AgriBuddy")
         self.wm_iconbitmap("icons/icon.ico")
@@ -77,7 +81,6 @@ class LoginPage(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, fg_color=WHITE)
         self.controller = controller
-        #self.auth_client = AuthClient()
         
         # Scroll frame
         scroll_frame = ctk.CTkScrollableFrame(self, fg_color="transparent")
@@ -119,7 +122,7 @@ class LoginPage(ctk.CTkFrame):
         self.password_entry.pack(pady=(0, 20), padx=30)
         
         # Error message label
-        self.error_label = ctk.CTkLabel(form_frame, text="error test", 
+        self.error_label = ctk.CTkLabel(form_frame, text="", 
                                        font=("Segoe UI", 12), text_color="#FF0000")
         self.error_label.pack(pady=(0, 10))
         
@@ -150,22 +153,21 @@ class LoginPage(ctk.CTkFrame):
     
     def handle_login(self):
         """Handle login button click."""
-        username = self.username_entry.get().strip()
+        email = self.email_entry.get().strip()
         password = self.password_entry.get()
         
-        if not username or not password:
-            self.error_label.configure(text="Please enter both username and password")
+        if not email or not password:
+            self.error_label.configure(text="Please enter both email and password")
             return
         
         # Disable UI during login
         self.error_label.configure(text="Logging in...", text_color=ACCENT_GREEN)
         
-        # Perform login in a separate thread to avoid blocking UI
-        def login_thread():
-            success, message = self.auth_client.login(username, password)
-            self.after(0, lambda: self.login_callback(success, message))
+        # Perform (synchronous) authentication
+        success, message = authenticate_user(email, password)
+        self.login_callback(success, message)
         
-        #threading.Thread(target=login_thread, daemon=True).start()
+        
     
     def login_callback(self, success: bool, message: str):
         """Callback after login attempt."""
@@ -181,7 +183,6 @@ class SignUpPage(ctk.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, fg_color=WHITE)
         self.controller = controller
-        #self.auth_client = AuthClient()
         
         # Scroll frame
         scroll_frame = ctk.CTkScrollableFrame(self, fg_color="transparent")
@@ -238,7 +239,7 @@ class SignUpPage(ctk.CTkFrame):
         self.confirm_password_entry.pack(pady=(0, 20), padx=30)
         
         # Error message label
-        self.error_label = ctk.CTkLabel(form_frame, text="error test",
+        self.error_label = ctk.CTkLabel(form_frame, text="",
                                        font=("Segoe UI", 12), text_color="#FF0000")
         self.error_label.pack(pady=(0, 10))
         
@@ -287,15 +288,19 @@ class SignUpPage(ctk.CTkFrame):
             self.error_label.configure(text="Password must be at least 6 characters long")
             return
         
+        # Basic email validation
+        if "@" not in email or "." not in email.split("@")[-1]:
+            self.error_label.configure(text="Please enter a valid email address")
+            return
+        
         # Disable UI during signup
         self.error_label.configure(text="Creating account...", text_color=ACCENT_GREEN)
         
-        # Perform signup in a separate thread
-        def signup_thread():
-            success, message = self.auth_client.signup(username, email, password)
-            self.after(0, lambda: self.signup_callback(success, message))
+        # Create user account
+        success, message = create_user(username, email, password)
+        self.signup_callback(success, message)
         
-        #threading.Thread(target=signup_thread, daemon=True).start()
+        
     
     def signup_callback(self, success: bool, message: str):
         """Callback after signup attempt."""

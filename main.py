@@ -607,9 +607,7 @@ class PestPage(BaseModelPage):
         self.output_box.insert("end", f"Confidence: {confidence:.2f}%\n\n")
 
 
-# ---------------------------
-#  Run the App
-# ---------------------------
+#  Run app
 if __name__ == "__main__":
     app = AgriBuddyApp()
     app.mainloop()

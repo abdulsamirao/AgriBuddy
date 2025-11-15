@@ -14,12 +14,10 @@ This project aims to build a machine-learning–based image classification syste
 - Design a simple GUI for uploading images and viewing predictions.
 - Implement a basic authentication system using SQLite.
 
-
-
 # Tools and Technologies
 
 | Component | Technology |
-|--||
+|-----------|------------|
 | Programming Language | Python |
 | ML Framework | Keras (TensorFlow) |
 | Base Model | MobileNetV3Large |
@@ -28,8 +26,6 @@ This project aims to build a machine-learning–based image classification syste
 | GUI Framework | CustomTkinter |
 | Database | SQLite3 |
 | Project Management | Trello |
-
-
 
 # Features
 
@@ -40,8 +36,6 @@ This project aims to build a machine-learning–based image classification syste
 - Mango leaf disease classifier  
 - Cotton leaf disease classifier  
 - Agricultural pest classifier  
-
-
 
 # Implementation
 
@@ -56,8 +50,6 @@ The project was organized using a Kanban workflow in Trello with five lists:
 - Done  
 
 All tasks were placed in the Project Backlog and gradually moved through each stage. The *Current Focus* list was limited to 3–4 tasks to maintain efficiency.
-
-
 
 ## Model Training
 
@@ -82,8 +74,6 @@ A unified training pipeline was created for all four classification models, util
 - Dense(256) + ReLU + Dropout(0.3)  
 - Softmax output layer  
 
-
-
 ### Training Process
 
 #### Phase 1: Base Frozen
@@ -101,8 +91,6 @@ A unified training pipeline was created for all four classification models, util
 - EarlyStopping  
 - ModelCheckpoint  
 
-
-
 ### Training Framework
 
 A modular system was built using a ClassifierTrainer base class:
@@ -119,8 +107,6 @@ Configurations included:
 - Class counts for imbalance handling  
 - Number of unfrozen base layers  
 
-
-
 ### Dataset Preparation & Balancing
 
 #### Dataset Splitting
@@ -130,8 +116,6 @@ Some datasets were split into train/validation using `splitfolders`.
 - A script counted images per class  
 - Weights computed using inverse frequency normalization  
 - Ensured minority classes received higher gradient importance  
-
-
 
 ### Background Augmentation (Mango Dataset)
 
@@ -145,8 +129,6 @@ To improve performance:
 4. Used ProcessPoolExecutor for parallel processing.
 
 This significantly improved dataset diversity and model generalization.
-
-
 
 ## User Interface
 
@@ -164,8 +146,6 @@ The GUI was built using CustomTkinter, structured across multiple pages, each im
 
 Navigation is handled by raising frames through a controller.
 
-
-
 ### Login & Sign-Up Pages
 
 Components used:
@@ -179,8 +159,6 @@ Authentication logic:
 - Validation inside page classes  
 - Database interactions handled via `database.py`
 
-
-
 ## Home Page
 
 The Home Page provides buttons to navigate to:
@@ -189,8 +167,6 @@ The Home Page provides buttons to navigate to:
 - Mango Disease Detection  
 - Cotton Disease Detection  
 - Pest Detection  
-
-
 
 ## Model Pages
 
@@ -205,15 +181,11 @@ All model pages inherit from a shared class BaseModelPage containing:
 
 This prevents code duplication.
 
-
-
 # Conclusion
 
 This project successfully developed a high-accuracy leaf disease and pest classification system with a modern GUI. Using transfer learning, background augmentation, class balancing, and modular training scripts, the system achieved over 90% validation accuracy across all models.
 
 The project demonstrates how deep learning can effectively address real agricultural challenges.
-
-
 
 # Future Work
 
@@ -240,13 +212,11 @@ Implement:
 - Admin controls  
 - Free/paid tiers  
 
-
-
 # Overall Outlook
 
 With further enhancements in preprocessing, dataset design, cloud deployment, and backend integration, AgriBuddy has the potential to evolve into a commercial-grade, scalable, and widely adopted agricultural assistant.
 
-
+---
 
 Icon credits:
 https://www.flaticon.com/free-icons/sprout

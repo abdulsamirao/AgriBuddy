@@ -2,7 +2,7 @@
 
 # Introduction
 
-Agriculture plays a vital role in the economy of many countries, including Pakistan, where a significant portion of the population depends on farming. Crop production is often affected by plant leaf diseases and agricultural pests, which can reduce yield and quality. Traditionally, identifying these issues requires expert knowledge and manual inspection—methods that are time-consuming, subjective, and not always accessible to small-scale farmers.
+Agriculture plays a vital role in the economy of many countries, including Pakistan, where a significant portion of the population depends on farming. Crop production is often affected by plant leaf diseases and agricultural pests, which can reduce yield and quality. Traditionally, identifying these issues requires expert knowledge and manual inspection, methods that are time-consuming, subjective, and not always accessible to small-scale farmers.
 
 This project aims to build a machine-learning–based image classification system capable of detecting plant leaf diseases and agricultural pests. A user-friendly graphical user interface (GUI) enables easy interaction, making the system accessible to general users.
 
@@ -150,7 +150,7 @@ This significantly improved dataset diversity and model generalization.
 
 ## User Interface
 
-The GUI was built using CustomTkinter, structured across multiple pages—each implemented as a class inheriting from `CTkFrame`.
+The GUI was built using CustomTkinter, structured across multiple pages, each implemented as a class inheriting from `CTkFrame`.
 
 ### Pages Implemented
 

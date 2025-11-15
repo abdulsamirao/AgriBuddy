@@ -1,7 +1,7 @@
 import numpy as np
 
 PEST_CONFIG: dict[str, any] = {
-    # --- Data and File Paths ---
+    # Data and File Paths
     "TASK_NAME": "pest_classifier",
     "TRAIN_PATH": "datasets/pests_dataset/train",
     "VAL_PATH": "datasets/pests_dataset/valid",
@@ -9,7 +9,7 @@ PEST_CONFIG: dict[str, any] = {
     "WEIGHTS_SAVE_PATH": "models/pest_classifier/pest_classifier_final.weights.h5",
     "MODEL_CHECKPOINT_SAVE_PATH": "models/pest_classifier/pest_classifier_checkpoint.keras",
     
-    # --- Hyperparameters ---
+    # Hyperparameters
     "TRAIN_FROM_SCRATCH": False,
     "IMAGE_SIZE": (224, 224),
     "BATCH_SIZE": 32,
@@ -17,11 +17,11 @@ PEST_CONFIG: dict[str, any] = {
     "EPOCHS": 30,
     "SEED": 42, # For data shuffling and augmentation
     
-    # --- Transfer Learning Configuration ---
+    # Transfer Learning Configuration
     # The number of final layers in the MobileNetV3Large base model to keep UNFROZEN (trainable).
     "UNFROZEN_BASE_LAYERS_COUNT": 80, 
     
-    # --- Class Imbalance Handling ---
+    # Class Imbalance Handling
     "CLASS_COUNTS": np.array([
         400, # ants
         405, # bees
